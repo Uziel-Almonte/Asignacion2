@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DataBaseServices {
 
     private static DataBaseServices instance;
-    private String URL = "jdbc:h2:tcp://localhost/~/";
+    private String URL = "jdbc:h2:file:./database/test;AUTO_SERVER=TRUE";
 
     private DataBaseServices(){
         registerDriver();

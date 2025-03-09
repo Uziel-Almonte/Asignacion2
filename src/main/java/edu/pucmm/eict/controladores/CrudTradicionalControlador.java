@@ -45,9 +45,12 @@ public class CrudTradicionalControlador  {
         //obteniendo la información enviada.
         int matricula = ctx.formParamAsClass("matricula", Integer.class).get();
         String nombre = ctx.formParam("nombre");
+        String apellido = ctx.formParam("apellido");
+        String telefono = ctx.formParam("telefono");
         String carrera = ctx.formParam("carrera");
+
         //
-        Estudiante tmp = new Estudiante(matricula, nombre, carrera);
+        Estudiante tmp = new Estudiante(matricula, nombre, apellido, telefono, carrera);
         //realizar algún tipo de validación...
         fakeServices.crearEstudiante(tmp); //puedo validar, existe un error enviar a otro vista.
         ctx.redirect("/crud-simple/");
@@ -57,14 +60,14 @@ public class CrudTradicionalControlador  {
         Estudiante estudiante = fakeServices.getEstudiantePorMatricula(ctx.pathParamAsClass("matricula", Integer.class).get());
         //
         Map<String, Object> modelo = new HashMap<>();
-        modelo.put("titulo", "Formulario Visaulizar Estudiante "+estudiante.getMatricula());
+        modelo.put("titulo", "Formulario Visualizar Estudiante " + estudiante.getMatricula());
         modelo.put("estudiante", estudiante);
         modelo.put("visualizar", true); //para controlar en el formulario si es visualizar
         modelo.put("accion", "/crud-simple/");
-
-        //enviando al sistema de ,plantilla.
+    
         ctx.render("/templates/crud-tradicional/crearEditarVisualizar.html", modelo);
     }
+    
 
     public static void editarEstudianteForm(@NotNull Context ctx) throws Exception {
         Estudiante estudiante = fakeServices.getEstudiantePorMatricula(ctx.pathParamAsClass("matricula", Integer.class).get());
@@ -82,13 +85,16 @@ public class CrudTradicionalControlador  {
         //obteniendo la información enviada.
         int matricula = ctx.formParamAsClass("matricula", Integer.class).get();
         String nombre = ctx.formParam("nombre");
+        String apellido = ctx.formParam("apellido");
+        String telefono = ctx.formParam("telefono");
         String carrera = ctx.formParam("carrera");
+    
         //
-        Estudiante tmp = new Estudiante(matricula, nombre, carrera);
-        //realizar algún tipo de validación...
-        fakeServices.actualizarEstudiante(tmp); //puedo validar, existe un error enviar a otro vista.
+        Estudiante tmp = new Estudiante(matricula, nombre, apellido, telefono, carrera);
+        fakeServices.actualizarEstudiante(tmp); 
         ctx.redirect("/crud-simple/");
     }
+    
 
     public static void eliminarEstudiante(@NotNull Context ctx) throws Exception {
         fakeServices.eliminandoEstudiante(ctx.pathParamAsClass("matricula", Integer.class).get());

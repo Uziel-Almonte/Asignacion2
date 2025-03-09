@@ -2,6 +2,7 @@ package edu.pucmm.eict.controladores;
 
 import edu.pucmm.eict.encapsulaciones.Estudiante;
 import edu.pucmm.eict.encapsulaciones.Usuario;
+import edu.pucmm.eict.servicios.FakeServices;
 import edu.pucmm.eict.util.BaseControlador;
 import io.javalin.Javalin;
 
@@ -53,7 +54,10 @@ public class PlantillasControlador extends BaseControlador {
         app.get("/freemarker/datosEstudiante/{matricula}", ctx -> {
             //tomando el parametro utl y validando el tipo.
             int matricula = ctx.pathParamAsClass("matricula", Integer.class).get();
-            Estudiante estudiante = new Estudiante(matricula, "Estudiante matricula: "+matricula, "ISC");
+            Estudiante estudiante = FakeServices.getInstancia().getEstudiantePorMatricula(matricula);
+            if (estudiante == null) {
+                estudiante = new Estudiante(matricula, "Desconocido", "Apellido", "000-000-0000", "ISC");
+            }
             //
             Map<String, Object> modelo = new HashMap<>();
             modelo.put("estudiante", estudiante);
@@ -91,9 +95,9 @@ public class PlantillasControlador extends BaseControlador {
     private List<Estudiante> getEstudiantes() {
         //listando los estudiantes..
         List<Estudiante> listaEstudiante = new ArrayList<>();
-        listaEstudiante.add(new Estudiante(20011136, "Carlos Camacho", "ITT"));
-        listaEstudiante.add(new Estudiante(20011137, "Otro Estudiante", "ISC"));
-        listaEstudiante.add(new Estudiante(20011138, "Otro otro", "ISC"));
+        listaEstudiante.add(new Estudiante(20011136, "Carlos", "Camacho", "809-555-1234", "ITT"));
+        listaEstudiante.add(new Estudiante(20011137, "Maria", "Gomez", "809-555-5678", "ISC"));
+        listaEstudiante.add(new Estudiante(20011138, "Juan", "Perez", "809-555-9101", "ISC"));
         return listaEstudiante;
     }
 }

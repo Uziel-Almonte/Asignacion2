@@ -1,5 +1,7 @@
 package edu.pucmm.eict;
 
+import java.sql.SQLException;
+
 import edu.pucmm.eict.controladores.*;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
@@ -9,15 +11,24 @@ import io.javalin.rendering.template.JavalinThymeleaf;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import edu.pucmm.eict.services.BootStrapServices;
+import edu.pucmm.eict.services.DataBaseServices;
+
 import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class Main {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException{
         //Ejemplo hola mundo
         String mensaje = "Hola Mundo en Javalin :-D";
         System.out.println(mensaje);
+
+        BootStrapServices.startDB();
+
+        DataBaseServices.getInstance().getConnection();
+
+        BootStrapServices.getInstance().init();
 
         //Creando la instancia del servidor y configurando.
         Javalin app = Javalin.create(config ->{
@@ -106,7 +117,8 @@ public class Main {
             }
 
         });
-
+        
+        BootStrapServices.stopDB();
     }
 
     /**

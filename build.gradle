@@ -50,6 +50,15 @@ dependencies {
     // Add these dependencies
     implementation ('com.h2database:h2:2.2.224')
     implementation ('org.hibernate:hibernate-core:6.4.4.Final')
+
+    // Jakarta Persistence API
+    implementation 'jakarta.persistence:jakarta.persistence-api:2.2.3'
+
+    // JPA API
+    implementation 'javax.persistence:javax.persistence-api:2.2'
+
+    // JDBC Driver (Optional)
+    implementation 'org.jboss.logging:jboss-logging:3.4.1.Final'
 }
 
 shadowJar{
@@ -65,4 +74,9 @@ shadowJar{
  */
 task stage {
     dependsOn shadowJar
+}
+
+task runH2Console(type: JavaExec) {
+    main = 'org.h2.tools.Console'
+    classpath = sourceSets.main.runtimeClasspath
 }
