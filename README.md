@@ -1,5 +1,6 @@
 ## Guía de pruebas
  El endpoint que se estara testeando es /estudiante.html
+ http://localhost:7000/estudiante.html
  
 ## Requiere:
 
