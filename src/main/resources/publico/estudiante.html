@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Student Management</h2>
+        
+        <!-- Form for Create/Update -->
+        <form id="studentForm" class="mb-4">
+            <div class="mb-3">
+                <label for="matricula" class="form-label">Matricula</label>
+                <input type="number" class="form-control" id="matricula" name="matricula" required>
+            </div>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="mb-3">
+                <label for="apellido" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="apellido" name="apellido" required>
+            </div>
+            <div class="mb-3">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input type="text" class="form-control" id="telefono" name="telefono" required>
+            </div>
+            <div class="mb-3">
+                <label for="carrera" class="form-label">Carrera</label>
+                <input type="text" class="form-control" id="carrera" name="carrera" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="reset" class="btn btn-secondary">Clear</button>
+        </form>
+
+        <!-- Table for listing students -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Matricula</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Teléfono</th>
+                    <th>Carrera</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="studentList">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL = '/api/estudiante';
+        let editMode = false;
+
+        // Load students on page load
+        document.addEventListener('DOMContentLoaded', loadStudents);
+
+        // Form submit handler
+        document.getElementById('studentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const student = Object.fromEntries(formData);
+            
+            try {
+                const url = API_URL;
+                const method = editMode ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(student)
+                });
+
+                if (response.ok) {
+                    loadStudents();
+                    e.target.reset();
+                    editMode = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        async function loadStudents() {
+            try {
+                const response = await fetch(API_URL);
+                const students = await response.json();
+                const tbody = document.getElementById('studentList');
+                tbody.innerHTML = '';
+
+                students.forEach(student => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.matricula}</td>
+                        <td>${student.nombre}</td>
+                        <td>${student.apellido}</td>
+                        <td>${student.telefono}</td>
+                        <td>${student.carrera}</td>
+                        <td>
+                            <button onclick="editStudent(${JSON.stringify(student)})" class="btn btn-sm btn-warning">Edit</button>
+                            <button onclick="deleteStudent(${student.matricula})" class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function editStudent(student) {
+            document.getElementById('matricula').value = student.matricula;
+            document.getElementById('nombre').value = student.nombre;
+            document.getElementById('apellido').value = student.apellido;
+            document.getElementById('telefono').value = student.telefono;
+            document.getElementById('carrera').value = student.carrera;
+            editMode = true;
+        }
+
+        async function deleteStudent(matricula) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                try {
+                    const response = await fetch(`${API_URL}/${matricula}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        loadStudents();
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
